@@ -8,7 +8,7 @@ class helpWindow(QWidget):
         super().__init__()
         self.setGeometry(750, 300, 600, 600)
         grid = QGridLayout()
-        self.setFixedSize(500, 500)
+        self.setFixedSize(500, 560)
         self.setLayout(grid)
         words=list()
         with open('help.txt', 'r', encoding="utf-8") as f:
@@ -16,10 +16,18 @@ class helpWindow(QWidget):
         self.setWindowTitle("Справка")
         label=QLabel(''.join(map(str,words)))
         label.setWordWrap(True)
-        label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         label.setStyleSheet("""
-        font-size:16px;
-        """)
+                font-family: 'Segoe UI', sans-serif; /* Задайте приятный шрифт */
+                font-size: 16px; /* Укажите размер шрифта */
+                color: #333333; /* Установите более темный цвет текста для лучшего контраста */
+                line-height: 1.5; /* Увеличьте межстрочный интервал */
+                padding: 8px; /* Добавьте отступы вокруг текста */
+                background-color: #f5f5f5; /* Установите светлый фон для чтения */
+                border: 1px solid #ccc; /* Добавьте границу вокруг QLabel */
+                border-radius: 4px; /* Скруглите углы */
+                """)
+        label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+
         grid.addWidget(label)
 
 

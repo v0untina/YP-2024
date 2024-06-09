@@ -1,23 +1,28 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-import sys,random
-from main import MainWindow
+import sys, random
+
+
 class game(QWidget):
     def __init__(self):
         super().__init__()
         self.compWord = ""
         self.currentRow = 0
-        self.setWindowTitle(MainWindow().title4)
-        self.setWindowIcon(QIcon((MainWindow().icon4)))
+        self.icon4 = "4.png"
+        self.title4 = "Четыре буквы"
+        self.left = 50
+        self.top = 50
+        self.setWindowTitle(self.title4)
+        self.setWindowIcon(QIcon((self.icon4)))
         self.randomWord()
         grid = QGridLayout()
-        grid.setRowMinimumHeight(0,30)
-        grid.setRowMinimumHeight(7,30)
-        grid.setColumnMinimumWidth(0,30)
+        grid.setRowMinimumHeight(0, 30)
+        grid.setRowMinimumHeight(7, 30)
+        grid.setColumnMinimumWidth(0, 30)
         grid.setColumnMinimumWidth(6, 30)
         self.setLayout(grid)
-        self.titleLabel = QLabel(MainWindow().title4)
+        self.titleLabel = QLabel(self.title4)
         self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.titleLabel.setStyleSheet("""
         color:'#5C5C5C';
@@ -28,17 +33,14 @@ class game(QWidget):
         """)
         grid.addWidget(self.titleLabel, 0, 0, 1, 7)
 
-
-        #ЗАПОЛНЕНИЕ МАССИВА
+        # ЗАПОЛНЕНИЕ МАССИВА
         self.ArrayBox = []
         for _ in range(6):
             self.ArrayBox.append([])
-        print(self.ArrayBox)
         positions = []
         for i in range(6):
             for j in range(4):
                 positions.append((i + 1, j + 1))
-        print(positions)
 
         for i, position in enumerate(positions):
             self.ArrayBox[position[0] - 1].append(QLineEdit())
@@ -50,8 +52,8 @@ class game(QWidget):
                 usersBox.setMaxLength(1)
                 usersBox.textEdited.connect(lambda: self.change())
                 usersBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                usersBox.setMinimumHeight(MainWindow().left * 2)
-                usersBox.setMinimumWidth(MainWindow().top * 2)
+                usersBox.setMinimumHeight(self.left * 2)
+                usersBox.setMinimumWidth(self.top * 2)
                 usersBox.setStyleSheet("""
                         border:2px solid '#fffff';
                         font-size:65px;
@@ -66,10 +68,8 @@ class game(QWidget):
                             background:'light grey';
                             """)
 
-
-
-        #1 КНОПКА (НАКРЫТЫХ ДРУГ НА ДРУГА) ОБНУЛЕНИЯ/ОБНОВЛЕНИЯ СЛОВ И РЕЗУЛЬТАТОВ
-        self.messageFromUser=QLabel("")
+        # 1 КНОПКА (НАКРЫТЫХ ДРУГ НА ДРУГА) ОБНУЛЕНИЯ/ОБНОВЛЕНИЯ СЛОВ И РЕЗУЛЬТАТОВ
+        self.messageFromUser = QLabel("")
         self.messageFromUser.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.messageFromUser.setStyleSheet("""
         font-size:26px;
@@ -93,10 +93,9 @@ class game(QWidget):
         }
         """)
 
-        self.resetButton.clicked.connect(lambda:self.buttonResetClicked())
-        grid.addWidget(self.resetButton,8,2,2,2)
+        self.resetButton.clicked.connect(lambda: self.buttonResetClicked())
+        grid.addWidget(self.resetButton, 8, 2, 2, 2)
         self.resetButton.hide()
-
 
         # 2 КНОПКА (НАКРЫТЫХ ДРУГ НА ДРУГА) ОБНУЛЕНИЯ/ОБНОВЛЕНИЯ СЛОВ И РЕЗУЛЬТАТОВ
         self.guessButton = QPushButton("ПРОВЕРИТЬ")
@@ -115,24 +114,21 @@ class game(QWidget):
         color:'white';
         }
         """)
-        self.guessButton.clicked.connect(lambda:self.buttonGuessClicked())
-        grid.addWidget(self.guessButton,8,2,2,2)
+        self.guessButton.clicked.connect(lambda: self.buttonGuessClicked())
+        grid.addWidget(self.guessButton, 8, 2, 2, 2)
 
-
-    #ФУНКЦИЯ ВЫВОДА СЛУЧАЙНОГО СЛОВА ИЗ ТЕКСТОВОГО ДОКУМЕНТА(СЛОВАРЯ)
+    # ФУНКЦИЯ ВЫВОДА СЛУЧАЙНОГО СЛОВА ИЗ ТЕКСТОВОГО ДОКУМЕНТА(СЛОВАРЯ)
     def randomWord(self):
         wordsFile = open('words4.txt', 'r', encoding="utf-8")
         words = wordsFile.read().split()
         self.compWord = random.choice(words)
 
-
-
-    #ФУНКЦИИ КНОПКИ ПЕРЕЗАПУСКА
+    # ФУНКЦИИ КНОПКИ ПЕРЕЗАПУСКА
     def buttonResetClicked(self):
         self.randomWord()
-        self.currentRow=0
+        self.currentRow = 0
         self.messageFromUser.setText("")
-        for i,row in enumerate(self.ArrayBox):
+        for i, row in enumerate(self.ArrayBox):
             for userBox in row:
                 userBox.setStyleSheet("""
                 border:2px solid '#000000';
@@ -150,13 +146,13 @@ class game(QWidget):
                     """)
         self.buttonSwap()
 
-    #ФУНКЦИЯ КОНПКИ ПРОВЕРКИ СЛОВА
+    # ФУНКЦИЯ КОНПКИ ПРОВЕРКИ СЛОВА
     def buttonGuessClicked(self):
-        if self.checkValid()==False:
+        if self.checkValid() == False:
             self.messageFromUser.setText("К сожалению данного слова нет в словаре :(")
             self.resetAll()
             self.messageFromUser.repaint()
-        elif self.checkWin()==False:
+        elif self.checkWin() == False:
             self.messageFromUser.setText(" ")
             self.messageFromUser.repaint()
             if self.currentRow < 5:
@@ -168,23 +164,22 @@ class game(QWidget):
         else:
             self.buttonSwap()
 
-
-    #ФУНКЦИЯ ВЫДЕЛЕНИЯ БУКВ НУЖНЫМ ЦВЕТОМ
+    # ФУНКЦИЯ ВЫДЕЛЕНИЯ БУКВ НУЖНЫМ ЦВЕТОМ
     def colorActiveRow(self):
         for i in range(4):
             self.ArrayBox[self.currentRow][i].setReadOnly(True)
             valuebox = self.ArrayBox[self.currentRow][i].text()
-            if valuebox.lower() ==self.compWord[i].lower():
+            if valuebox.lower() == self.compWord[i].lower():
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
                 border: 2px solid '#000000';
                 font-size: 65px;
-                background:'#BB88FE';
+                background:'green';
                 """)
             elif valuebox.lower() in self.compWord.lower():
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
                 border: 2px solid '#000000';
                 font-size: 65px;
-                background:'#37B3F3';
+                background:'yellow';
                 """)
             else:
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
@@ -193,25 +188,25 @@ class game(QWidget):
                 background:'grey';
                 """)
 
-    #ФУНКЦИЯ ОТКРЫВАНИЯ СЛЕДУЮЩЕГО СТОЛБЦА
+    # ФУНКЦИЯ ОТКРЫВАНИЯ СЛЕДУЮЩЕГО СТОЛБЦА
     def activateNextRow(self):
         for i in range(4):
-            self.ArrayBox[self.currentRow+1][i].setStyleSheet("""
+            self.ArrayBox[self.currentRow + 1][i].setStyleSheet("""
                 border:2px solid '#fffff';
                 font-size:65px;
                 background:'white';
             """)
-            self.ArrayBox[self.currentRow+1][i].setReadOnly(False)
-        self.currentRow=self.currentRow+1
+            self.ArrayBox[self.currentRow + 1][i].setReadOnly(False)
+        self.currentRow = self.currentRow + 1
 
-    #ФУНКЦИЯ ПРОВЕРКИ ВВЕДЕННОГО СЛОВА ПОЛЬЗОВАТЕЛЕМ
+    # ФУНКЦИЯ ПРОВЕРКИ ВВЕДЕННОГО СЛОВА ПОЛЬЗОВАТЕЛЕМ
     def checkWin(self):
         invalid = False
-        count=""
+        count = ""
         for i in self.ArrayBox[self.currentRow]:
-            count=count+i.text()
-        if count.lower()==self.compWord.lower():
-            invalid=True
+            count = count + i.text()
+        if count.lower() == self.compWord.lower():
+            invalid = True
             for i in self.ArrayBox[self.currentRow]:
                 i.setStyleSheet("""
                 border: 2px solid '#000000';
@@ -224,7 +219,7 @@ class game(QWidget):
                 self.buttonSwap()
         return invalid
 
-    #ФУНКЦИЯ ПОЯВЛЕНИЯ КНОПОК
+    # ФУНКЦИЯ ПОЯВЛЕНИЯ КНОПОК
     def buttonSwap(self):
         if self.guessButton.isVisible():
             self.resetButton.show()
@@ -233,7 +228,7 @@ class game(QWidget):
             self.resetButton.hide()
             self.guessButton.show()
 
-    #ФУНКЦИЯ ПРОВЕРКИ ПРАВИЛЬНОСТИ ВВОДА
+    # ФУНКЦИЯ ПРОВЕРКИ ПРАВИЛЬНОСТИ ВВОДА
     def checkValid(self):
         valid = True
         words = list()
@@ -246,31 +241,28 @@ class game(QWidget):
         for i in self.ArrayBox[self.currentRow]:
             count = count + i.text()
         if count.lower() not in words:
-            valid=False
+            valid = False
         return valid
 
     def resetAll(self):
         for i in range(4):
             self.ArrayBox[self.currentRow][i].setText('')
 
-    #ФУНКЦИЯ ПО ОКОНЧАНИИ ПОПЫТОК
+    # ФУНКЦИЯ ПО ОКОНЧАНИИ ПОПЫТОК
     def gameover(self):
         self.messageFromUser.setText(f"Вы проиграли,нужное слово: {self.compWord}")
         self.messageFromUser.repaint()
         self.buttonSwap()
 
-    #ФУНКЦИЯ ПЕРЕХОДА НА СЛЕД КУБ
+    # ФУНКЦИЯ ПЕРЕХОДА НА СЛЕД КУБ
     def change(self):
         for i in range(3):
-            if len(self.ArrayBox[self.currentRow][i].text())==1:
-                self.ArrayBox[self.currentRow][i+1].setFocus()
+            if len(self.ArrayBox[self.currentRow][i].text()) == 1:
+                self.ArrayBox[self.currentRow][i + 1].setFocus()
 
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = game()
     ex.show()
     sys.exit(app.exec())
-
-#ДОБАВИТЬ В КОНТЕКСТНОЕ МЕНЮ СПРАВКУ И ПРАВИЛА ИГРЫ
-#ДОБАВИТЬ ТЕМЫ,УРОВНИ,ТАЙМЕР

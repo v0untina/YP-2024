@@ -2,14 +2,17 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 import sys, random
-from main import MainWindow
 class game6(QWidget):
     def __init__(self):
         super().__init__()
         self.compWord = ""
         self.currentRow = 0
-        self.setWindowTitle(MainWindow().title6)
-        self.setWindowIcon(QIcon(MainWindow().icon6))
+        self.left = 50
+        self.top = 50
+        self.icon6 = "6.png"
+        self.title6 = "Шесть букв"
+        self.setWindowTitle(self.title6)
+        self.setWindowIcon(QIcon(self.icon6))
         self.randomWord()
         grid = QGridLayout()
         grid.setRowMinimumHeight(0, 10)
@@ -17,7 +20,7 @@ class game6(QWidget):
         grid.setColumnMinimumWidth(0, 1)
         grid.setColumnMinimumWidth(6, 10)
         self.setLayout(grid)
-        self.titleLabel = QLabel(MainWindow().title6)
+        self.titleLabel = QLabel(self.title6)
         self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.titleLabel.setStyleSheet("""
             color:'#5C5C5C';
@@ -32,12 +35,10 @@ class game6(QWidget):
         self.ArrayBox = []
         for _ in range(6):
             self.ArrayBox.append([])
-        print(self.ArrayBox)
         positions = []
         for i in range(6):
             for j in range(6):
                 positions.append((i+1,j+1))
-        print(positions)
 
         for i, position in enumerate(positions):
             self.ArrayBox[position[0] - 1].append(QLineEdit())
@@ -51,8 +52,8 @@ class game6(QWidget):
                 usersBox.setMaxLength(1)
                 usersBox.textEdited.connect(lambda:self.change())
                 usersBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                usersBox.setMinimumHeight(MainWindow().left*2)
-                usersBox.setMinimumWidth(MainWindow().top*2)
+                usersBox.setMinimumHeight(self.left*2)
+                usersBox.setMinimumWidth(self.top*2)
                 usersBox.setStyleSheet("""
                 border:2px solid '#fffff';
                 font-size:65px;
@@ -153,6 +154,7 @@ class game6(QWidget):
     def buttonGuessClicked(self):
         if self.checkValid()==False:
             self.messageFromUser.setText("К сожалению данного слова нет в словаре :(")
+            self.resetAll()
             self.messageFromUser.repaint()
         elif self.checkWin()==False:
             self.messageFromUser.setText(" ")
@@ -176,13 +178,13 @@ class game6(QWidget):
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
                 border: 2px solid '#000000';
                 font-size: 65px;
-                background:'#F86BAF';
+                background:'green';
                 """)
             elif valuebox.lower() in self.compWord.lower():
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
                 border: 2px solid '#000000';
                 font-size: 65px;
-                background:'#34B3F6';
+                background:'yellow';
                 """)
             else:
                 self.ArrayBox[self.currentRow][i].setStyleSheet("""
@@ -248,7 +250,9 @@ class game6(QWidget):
 
         return valid
 
-
+    def resetAll(self):
+        for i in range(6):
+            self.ArrayBox[self.currentRow][i].setText('')
     #ФУНКЦИЯ ПО ОКОНЧАНИИ ПОПЫТОК
     def gameover(self):
         self.messageFromUser.setText(f"Вы проиграли,нужное слово: {self.compWord}")
@@ -268,5 +272,3 @@ if __name__ =='__main__':
     ex.show()
     sys.exit(app.exec())
 
-#ДОБАВИТЬ В КОНТЕКСТНОЕ МЕНЮ СПРАВКУ И ПРАВИЛА ИГРЫ
-#ДОБАВИТЬ ТЕМЫ,УРОВНИ,ТАЙМЕР
