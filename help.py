@@ -1,34 +1,42 @@
-from PyQt6.QtWidgets import QApplication,QGridLayout , QLabel, QWidget
-from PyQt6.QtCore import Qt,QSize
+from PyQt6.QtWidgets import QApplication, QGridLayout, QLabel, QWidget, QScrollArea
+from PyQt6.QtCore import Qt
 import sys
-
 
 class helpWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setGeometry(750, 300, 600, 600)
+        self.setGeometry(750, 300,500,560)
         grid = QGridLayout()
         self.setFixedSize(500, 560)
         self.setLayout(grid)
-        words=list()
+        words = list()
         with open('help.txt', 'r', encoding="utf-8") as f:
             words = list(str(f.read()))
         self.setWindowTitle("Справка")
-        label=QLabel(''.join(map(str,words)))
+
+        label = QLabel(''.join(map(str, words)))
         label.setWordWrap(True)
         label.setStyleSheet("""
-                font-family: 'Segoe UI', sans-serif; /* Задайте приятный шрифт */
-                font-size: 16px; /* Укажите размер шрифта */
-                color: #333333; /* Установите более темный цвет текста для лучшего контраста */
-                line-height: 1.5; /* Увеличьте межстрочный интервал */
-                padding: 8px; /* Добавьте отступы вокруг текста */
-                background-color: #f5f5f5; /* Установите светлый фон для чтения */
-                border: 1px solid #ccc; /* Добавьте границу вокруг QLabel */
-                border-radius: 4px; /* Скруглите углы */
-                """)
+            QLabel { 
+                font-family: 'Arial Black', sans-serif; 
+                font-size: 14px; 
+                color: #333; 
+                background-color: #f7f7f7; 
+                line-height: 1.6; 
+                padding: 10px; 
+                border-radius: 8px; 
+                border: 1px solid #ccc; 
+            } 
+            QLabel:hover { 
+                background-color: #e5e5e5; 
+            }
+        """)
         label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
-        grid.addWidget(label)
+        scrollArea = QScrollArea()
+        scrollArea.setWidget(label)
+        scrollArea.setWidgetResizable(True)
+        grid.addWidget(scrollArea)
 
 
 if __name__ == '__main__':
